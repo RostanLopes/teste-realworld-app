@@ -1,9 +1,10 @@
 import userData from '../fixtures/userData.json';
 import LoginPage from '../pages/loginPage';
 import RegisterPage from '../pages/registerPage';
-
+import HomePage from '../pages/homePage';
 const loginPage = new LoginPage()
 const registerPage = new RegisterPage()
+const homePage = new HomePage()
 
 describe('Registro de novo usuário com sucesso', () => {
   it('Deve registrar um novo usuário com informações válidas', () => {
@@ -40,3 +41,27 @@ describe('Tentar registrar um novo usuário com informações incompletas', () =
     registerPage.registerUserError()
   });
 });
+
+describe('colocar dinheiro na conta', () => {
+  it.only('Adicionar dinheiro na conta', () => {
+    loginPage.accessLoginPage()
+    loginPage.loginWithAnyUser(userData.userSuccess.name, userData.userSuccess.password)
+    loginPage.buttonLogin()
+    loginPage.checkUserPage()
+    cy.get('[data-test="sidenav-user-balance"]').then(($value) => {
+    $value[0].innerText = '$2000';
+    cy.get('[data-test="sidenav-user-balance"]').should('contain', '$2000');
+    cy.get('[data-test="nav-top-new-transaction"]').click()
+    cy.get('[data-test="user-list-item-uBmeaz5pX"]').click()
+    cy.get('[data-test="transaction-create-amount-input"]').type('500')
+    cy.get('[data-test="transaction-create-description-input"]').type('PrimeiraTransferencia')
+    cy.get('[data-test="transaction-create-submit-payment"]').click();
+    cy.get('[data-test="sidenav-user-balance"]').should('contain', '$1500');
+  });
+  });
+});
+
+
+    //homePage.clickNext()
+    //homePage.registerBank()
+    //homePage.checkBalance()
