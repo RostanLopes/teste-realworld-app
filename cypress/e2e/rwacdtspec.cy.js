@@ -6,6 +6,7 @@ const loginPage = new LoginPage()
 const registerPage = new RegisterPage()
 const homePage = new HomePage()
 
+
 describe('Registro de novo usuário com sucesso', () => {
   it('Deve registrar um novo usuário com informações válidas', () => {
     cy.visit('http://localhost:3000/')
@@ -25,7 +26,7 @@ describe('Login com sucesso', () => {
 
 describe('Tentar fazer login com credenciais inválidas', () => {
   it('Deve exibir uma mensagem de erro ao fazer login com credenciais inválidas', () => {
-    cy.visit('http://localhost:3000/')
+    loginPage.accessLoginPage()
     loginPage.loginWithAnyUser(userData.userFail.name, userData.userFail.password)
     loginPage.buttonLogin()
     cy.get("[data-test='signin-error']").should('be.visible')
@@ -36,7 +37,7 @@ describe('Tentar fazer login com credenciais inválidas', () => {
 
 describe('Tentar registrar um novo usuário com informações incompletas', () => {
   it('Deve exibir mensagens de erro ao tentar registrar um novo usuário sem preencher todas as informações obrigatórias', () => {
-    cy.visit('http://localhost:3000/')
+    loginPage.accessLoginPage()
     loginPage.buttonRegister()
     registerPage.registerUserError()
   });
@@ -49,19 +50,16 @@ describe('colocar dinheiro na conta', () => {
     loginPage.buttonLogin()
     loginPage.checkUserPage()
     cy.get('[data-test="sidenav-user-balance"]').then(($value) => {
-    $value[0].innerText = '$2000';
-    cy.get('[data-test="sidenav-user-balance"]').should('contain', '$2000');
+    $value[0].innerText = '$2000,00';
+    homePage.clickNext()
+    homePage.registerBank()
+    cy.get('[data-test="sidenav-user-balance"]').should('contain', '$2000.00');
     cy.get('[data-test="nav-top-new-transaction"]').click()
     cy.get('[data-test="user-list-item-uBmeaz5pX"]').click()
-    cy.get('[data-test="transaction-create-amount-input"]').type('500')
+    cy.get('[data-test="transaction-create-amount-input"]').type('500.00')
     cy.get('[data-test="transaction-create-description-input"]').type('PrimeiraTransferencia')
     cy.get('[data-test="transaction-create-submit-payment"]').click();
-    cy.get('[data-test="sidenav-user-balance"]').should('contain', '$1500');
+    cy.get('[data-test="sidenav-user-balance"]').should('contain', '$1500.00');
   });
   });
 });
-
-
-    //homePage.clickNext()
-    //homePage.registerBank()
-    //homePage.checkBalance()
